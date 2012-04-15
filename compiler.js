@@ -1,49 +1,65 @@
 var compile = function(expr) {
 	var notes = [];
     
-	makeNote(notes, true, expr);
+	compileT(notes, true, expr);
     
 	return notes;
 };
 
 
-var makeNote = function(notes, nextNote, expr) {
-	if (expr.tag === 'note') {
+var compileT = function(notes, nextNote, expr) {
+	compileNote(notes, nextNote, expr);
+	compileRest(notes, nextNote, expr);
+    compilePar(notes, nextNote, expr);
+	compileSeq(notes, nextNote, expr);
+	compileRepeat(notes, nextNote, expr);
+};
+
+
+var compileNote = function(notes, nextNote, expr) {
+	if (expr.tag === 'note')
 		notes.push({
 			tag: 'note',
 			pitch: convertPitch(expr.pitch),
 			start: endTime(notes, nextNote),
 			dur: expr.dur
 		});
-        	return;
-	}
-    
-	if (expr.tag === 'rest') {
+}
+
+
+var compileRest = function(notes, nextNote, expr) {
+	if (expr.tag === 'rest')
 		notes.push({
 			tag: 'rest',
 			start: endTime(notes, nextNote),
 			dur: expr.duration
 		});
-		return;
-	}
-    
-	if (expr.tag === 'par')
-	{
-		makeNote(notes, true, expr.left);
-		makeNote(notes, false, expr.right);
-	}
-    
-	if (expr.tag === 'seq')
-	{
-		makeNote(notes, true, expr.left);
-		makeNote(notes, true, expr.right);
-	}
+}
 
+
+var compilePar = function(notes, nextNote, expr) {
+	if (expr.tag !== 'par')
+		return;
+		
+	compileT(notes, nextNote, expr.left);
+	compileT(notes, false, expr.right);
+}
+
+
+var compileSeq = function(notes, nextNote, expr) {
+	if (expr.tag !== 'seq')
+		return;
+	compileT(notes, true, expr.left);
+	compileT(notes, true, expr.right);
+}
+
+
+var compileRepeat = function(notes, nextNote, expr) {
 	if (expr.tag === 'repeat')
 		for (var i = 0; i < expr.count; i++) {
-			makeNote(notes, true, expr.section);
+			compileT(notes, true, expr.section);
 		}
-};
+}
 
 
 var endTime = function(notes, nextNote) {
@@ -68,35 +84,11 @@ var endTime = function(notes, nextNote) {
 };
 
 
-var convertPitch = function (pitch) {
-	var letter = 0;
-	var octive = pitch.substring(1);
-	
-	switch (pitch.substring(0, 1)) {
-		case 'c':
-			letter = 0;
-			break;
-		case 'd':
-			letter = 2;
-			break;
-		case 'e':
-			letter = 4;
-			break;
-		case 'f':
-			letter = 5;
-			break;
-		case 'g':
-			letter = 7;
-			break;
-		case 'a':
-			letter = 9;
-			break;
-		case 'b':
-			letter = 11;
-			break;
-	}
-	
-	return 12 + (12 * octive) + letter;
+var convertPitch = function (note) {
+	var octive = note[1];
+	var pitch = "c d ef g a b".indexOf(note[0]);
+
+	return 12 + (12 * octive) + pitch;
 };
 
 
@@ -128,6 +120,7 @@ var melody_mus = {
 		}
 	}
 };
+
 
 console.log(melody_mus);
 console.log(compile(melody_mus));
