@@ -10,7 +10,7 @@ var compile = function(expr) {
 var compileT = function(notes, nextNote, expr) {
 	compileNote(notes, nextNote, expr);
 	compileRest(notes, nextNote, expr);
-    compilePar(notes, nextNote, expr);
+	compilePar(notes, nextNote, expr);
 	compileSeq(notes, nextNote, expr);
 	compileRepeat(notes, nextNote, expr);
 };
