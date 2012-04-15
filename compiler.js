@@ -1,23 +1,23 @@
 var compile = function(expr) {
-    var notes = [];
+	var notes = [];
     
-    makeNote(notes, true, expr);
+	makeNote(notes, true, expr);
     
-    return notes;
+	return notes;
 };
 
 
 var makeNote = function(notes, nextNote, expr) {
-    if (expr.tag === 'note') {
-        notes.push({
-            tag: 'note',
-            pitch: convertPitch(expr.pitch),
-            start: endTime(notes, nextNote),
-            dur: expr.dur
-        });
-        return;
-    }
-
+	if (expr.tag === 'note') {
+		notes.push({
+			tag: 'note',
+			pitch: convertPitch(expr.pitch),
+			start: endTime(notes, nextNote),
+			dur: expr.dur
+		});
+        	return;
+	}
+    
 	if (expr.tag === 'rest') {
 		notes.push({
 			tag: 'rest',
@@ -27,45 +27,44 @@ var makeNote = function(notes, nextNote, expr) {
 		return;
 	}
     
-    if (expr.tag === 'par')
-    {
-        makeNote(notes, true, expr.left);
-        makeNote(notes, false, expr.right);
-    }
+	if (expr.tag === 'par')
+	{
+		makeNote(notes, true, expr.left);
+		makeNote(notes, false, expr.right);
+	}
     
-    if (expr.tag === 'seq')
-    {
-        makeNote(notes, true, expr.left);
-        makeNote(notes, true, expr.right);
-    }
+	if (expr.tag === 'seq')
+	{
+		makeNote(notes, true, expr.left);
+		makeNote(notes, true, expr.right);
+	}
 
 	if (expr.tag === 'repeat')
-		for (var i = 0; i < expr.count; i++)
-		{
+		for (var i = 0; i < expr.count; i++) {
 			makeNote(notes, true, expr.section);
 		}
 };
 
 
 var endTime = function(notes, nextNote) {
-    if (notes.length === 0)
-        return 0;
+	if (notes.length === 0)
+		return 0;
     
-    var maxTime = 0;
-    for (i = 0; i < notes.length; i++)
-    {
-        var evalTime;
+	var maxTime = 0;
+	for (i = 0; i < notes.length; i++) {
+		var evalTime;
         
-        if (nextNote)
-            evalTime = notes[i].start + notes[i].dur;
-        else
-            evalTime = notes[i].start;
+		if (nextNote)
+			evalTime = notes[i].start + notes[i].dur;
+		else
+			evalTime = notes[i].start;
             
-        if (evalTime > maxTime)
-            maxTime = evalTime;
-    }
-    
-    return maxTime;
+		if (evalTime > maxTime)
+			maxTime = evalTime;
+			
+	}
+    	
+    	return maxTime;
 };
 
 
