@@ -107,6 +107,7 @@ var melody_mus = {
 			left: { tag: 'rest', duration: 100 },
 			right:{
 				tag: 'repeat',
+				count: 3,
 				section: {
 					tag: 'seq',
 					left: { tag: 'note', pitch: 'c4', dur: 250 },
@@ -115,8 +116,7 @@ var melody_mus = {
 						left: { tag: 'note', pitch: 'd4', dur: 500 },
 						right: { tag: 'note', pitch: 'e4', dur: 500 }
 					}
-				},
-				count: 3
+				}
 			}
 		}
 	}
