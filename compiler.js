@@ -49,6 +49,7 @@ var compilePar = function(notes, nextNote, expr) {
 var compileSeq = function(notes, nextNote, expr) {
 	if (expr.tag !== 'seq')
 		return;
+		
 	compileT(notes, true, expr.left);
 	compileT(notes, true, expr.right);
 }
@@ -109,10 +110,10 @@ var melody_mus = {
 				section: {
 					tag: 'seq',
 					left: { tag: 'note', pitch: 'c4', dur: 250 },
-	      			right: {
+					right: {
 						tag: 'seq',
-	         			left: { tag: 'note', pitch: 'd4', dur: 500 },
-	         			right: { tag: 'note', pitch: 'e4', dur: 500 }
+						left: { tag: 'note', pitch: 'd4', dur: 500 },
+						right: { tag: 'note', pitch: 'e4', dur: 500 }
 					}
 				},
 				count: 3
