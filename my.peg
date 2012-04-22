@@ -1,0 +1,60 @@
+start =
+	expression
+
+validchar =
+	[0-9a-zA-Z_?!+-=@#$%^&*/.]
+	
+spacechar =
+	" "
+	passthru: validchar
+	{ return " " + passthru; }
+	/
+	passthru: validchar
+	{ return passthru; }
+	
+quote =
+	first: validchar
+	second: spacechar*
+	{ return first + second.join(""); }
+	
+comment =
+	";;"
+	spacechar*
+	"\n"
+	{ return; }
+
+atom =
+	chars:validchar+
+	{ return chars.join(""); }
+		
+expression =
+		comment
+		passthru: expression
+		{ return passthru; }
+	/
+		" "*
+		"("
+		passthru: expression*
+		")"
+		" "*
+		{ return passthru; }
+	/
+		" "
+		passthru: expression
+		{ return passthru; }
+	/
+		"\n"
+		passthru: expression
+		{ return passthru; }
+	/
+		"\t"
+		passthru: expression
+		{ return passthru; }
+	/
+		"'("
+		passthru: quote
+		")"
+		{ return "(quote (" + passthru + "))"; }
+	/
+		entity: atom
+		{ return entity; }
